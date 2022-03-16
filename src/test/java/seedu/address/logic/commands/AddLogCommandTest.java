@@ -6,6 +6,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static seedu.address.commons.core.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_LOG_DESCRIPTION;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_LOG_TITLE;
+import static seedu.address.logic.commands.CommandTestUtil.VALID_NAME_AMY;
+import static seedu.address.logic.commands.CommandTestUtil.VALID_NAME_BOB;
 import static seedu.address.logic.commands.CommandTestUtil.assertCommandFailure;
 import static seedu.address.logic.commands.CommandTestUtil.assertCommandSuccess;
 import static seedu.address.logic.commands.CommandTestUtil.showPersonAtIndex;
@@ -22,6 +24,7 @@ import seedu.address.model.Model;
 import seedu.address.model.ModelManager;
 import seedu.address.model.UserPrefs;
 import seedu.address.model.person.Log;
+import seedu.address.model.person.Name;
 import seedu.address.model.person.Person;
 import seedu.address.testutil.PersonBuilder;
 
@@ -33,6 +36,7 @@ public class AddLogCommandTest {
     private static final String MESSAGE_INVALID_FORMAT =
             String.format(MESSAGE_INVALID_COMMAND_FORMAT, AddLogCommand.MESSAGE_USAGE);
     private static final String MESSAGE_INVALID_INDEX = Messages.MESSAGE_INVALID_PERSON_DISPLAYED_INDEX;
+    private static final String MESSAGE_PERSON_NOT_FOUND = AddLogCommand.MESSAGE_PERSON_NOT_FOUND;
 
     // ===== UNIT TESTS =====
     @Test
@@ -43,6 +47,8 @@ public class AddLogCommandTest {
         AddLogCommand.AddLogDescriptor otherDescriptor;
         Index targetIndex = INDEX_FIRST_PERSON;
         Index otherIndex = INDEX_SECOND_PERSON;
+        Name targetName = new Name(VALID_NAME_AMY);
+        Name otherName = new Name(VALID_NAME_BOB);
         String title = "some title";
         String otherTitle = "some other title";
 
@@ -51,6 +57,10 @@ public class AddLogCommandTest {
         descriptor.setNewTitle(title);
         command = new AddLogCommand(targetIndex, descriptor);
         other = new AddLogCommand(targetIndex, descriptor);
+        assertEquals(command, other);
+
+        command = new AddLogCommand(targetName, descriptor);
+        other = new AddLogCommand(targetName, descriptor);
         assertEquals(command, other);
 
         // same object -> returns true
@@ -69,6 +79,13 @@ public class AddLogCommandTest {
         other = new AddLogCommand(otherIndex, descriptor);
         assertNotEquals(command, other);
 
+        // different name -> returns false
+        descriptor = new AddLogCommand.AddLogDescriptor();
+        descriptor.setNewTitle(title);
+        command = new AddLogCommand(targetName, descriptor);
+        other = new AddLogCommand(otherName, descriptor);
+        assertNotEquals(command, other);
+
         // different descriptor -> returns false
         descriptor = new AddLogCommand.AddLogDescriptor();
         descriptor.setNewTitle(title);
@@ -79,13 +96,14 @@ public class AddLogCommandTest {
         assertNotEquals(command, other);
     }
 
+
     /* ===== INTEGRATION TESTS WITH MODEL =====
     Integration tests with Model component. Note that we do tests for both filtered and unfiltered lists
     as these states control what the user sees, but regardless the changes apply to the true underlying
     data state of the model.
      */
     @Test
-    public void execute_validIInputUnfilteredList_success() {
+    public void execute_withIndexValidIInputUnfilteredList_success() {
 
         String title = VALID_LOG_TITLE;
         String description = VALID_LOG_DESCRIPTION;
@@ -128,13 +146,60 @@ public class AddLogCommandTest {
     }
 
     @Test
-    public void execute_validInputFilteredList_success() {
+    public void execute_withNameValidIInputUnfilteredList_success() {
 
         String title = VALID_LOG_TITLE;
         String description = VALID_LOG_DESCRIPTION;
         String expectedMessage = AddLogCommand.MESSAGE_ADD_LOG_SUCCESS;
         AddLogCommand command;
         Index targetIndex = INDEX_FIRST_PERSON;
+        Name targetName;
+        Log log;
+        Person basePerson;
+        Person addedLogPerson;
+        Model expectedModel;
+        AddLogCommand.AddLogDescriptor descriptor;
+        Model model;
+
+        // only title
+        model = new ModelManager(getTypicalAddressBook(), new UserPrefs());
+        log = new Log(title, null);
+        expectedModel = new ModelManager(new AddressBook(model.getAddressBook()), new UserPrefs());
+        basePerson = expectedModel.getFilteredPersonList().get(targetIndex.getZeroBased());
+        targetName = basePerson.getName();
+        addedLogPerson = new PersonBuilder(basePerson).withLogs(log).build();
+        expectedModel.setPerson(basePerson, addedLogPerson);
+
+        descriptor = new AddLogCommand.AddLogDescriptor();
+        descriptor.setNewTitle(title);
+        command = new AddLogCommand(targetName, descriptor);
+        assertCommandSuccess(command, model, expectedMessage, expectedModel);
+
+        // title and description
+        model = new ModelManager(getTypicalAddressBook(), new UserPrefs());
+        log = new Log(title, description);
+        expectedModel = new ModelManager(new AddressBook(model.getAddressBook()), new UserPrefs());
+        basePerson = expectedModel.getFilteredPersonList().get(targetIndex.getZeroBased());
+        targetName = basePerson.getName();
+        addedLogPerson = new PersonBuilder(basePerson).withLogs(log).build();
+        expectedModel.setPerson(basePerson, addedLogPerson);
+
+        descriptor = new AddLogCommand.AddLogDescriptor();
+        descriptor.setNewTitle(title);
+        descriptor.setNewDescription(description);
+        command = new AddLogCommand(targetName, descriptor);
+        assertCommandSuccess(command, model, expectedMessage, expectedModel);
+    }
+
+    @Test
+    public void execute_withIndexValidInputFilteredList_success() {
+
+        String title = VALID_LOG_TITLE;
+        String description = VALID_LOG_DESCRIPTION;
+        String expectedMessage = AddLogCommand.MESSAGE_ADD_LOG_SUCCESS;
+        AddLogCommand command;
+        Index targetIndex = INDEX_FIRST_PERSON;
+        Name targetName;
         Log log;
         Person basePerson;
         Person addedLogPerson;
@@ -151,12 +216,13 @@ public class AddLogCommandTest {
         showPersonAtIndex(expectedModel, INDEX_FIRST_PERSON); // apply filter
 
         basePerson = expectedModel.getFilteredPersonList().get(targetIndex.getZeroBased());
+        targetName = basePerson.getName();
         addedLogPerson = new PersonBuilder(basePerson).withLogs(log).build();
         expectedModel.setPerson(basePerson, addedLogPerson);
 
         descriptor = new AddLogCommand.AddLogDescriptor();
         descriptor.setNewTitle(title);
-        command = new AddLogCommand(targetIndex, descriptor);
+        command = new AddLogCommand(targetName, descriptor);
         assertCommandSuccess(command, model, expectedMessage, expectedModel);
 
         // title and description
@@ -168,18 +234,19 @@ public class AddLogCommandTest {
         showPersonAtIndex(expectedModel, INDEX_FIRST_PERSON); // apply filter
 
         basePerson = expectedModel.getFilteredPersonList().get(targetIndex.getZeroBased());
+        targetName = basePerson.getName();
         addedLogPerson = new PersonBuilder(basePerson).withLogs(log).build();
         expectedModel.setPerson(basePerson, addedLogPerson);
 
         descriptor = new AddLogCommand.AddLogDescriptor();
         descriptor.setNewTitle(title);
         descriptor.setNewDescription(description);
-        command = new AddLogCommand(targetIndex, descriptor);
+        command = new AddLogCommand(targetName, descriptor);
         assertCommandSuccess(command, model, expectedMessage, expectedModel);
     }
 
     @Test
-    public void execute_duplicateLog_failure() {
+    public void execute_withIndexDuplicateLog_failure() {
 
         String title = VALID_LOG_TITLE;
         Log log = new Log(title, null);
@@ -222,6 +289,50 @@ public class AddLogCommandTest {
     }
 
     @Test
+    public void execute_withNameDuplicateLog_failure() {
+
+        String title = VALID_LOG_TITLE;
+        Log log = new Log(title, null);
+        Model testModel;
+        Index targetIndex = INDEX_FIRST_PERSON;
+        Name targetName;
+        AddLogCommand.AddLogDescriptor descriptor;
+        AddLogCommand command;
+        Model model;
+        Person withLogPerson;
+
+        // ===== UNFILTERED LIST =====
+        model = new ModelManager(getTypicalAddressBook(), new UserPrefs());
+
+        // add log into list
+        testModel = new ModelManager(new AddressBook(model.getAddressBook()), new UserPrefs());
+        withLogPerson = new PersonBuilder().withLogs(log).build(); // build person with log
+        targetName = withLogPerson.getName();
+        testModel.setPerson((model.getFilteredPersonList().get(targetIndex.getZeroBased())), withLogPerson); // add him in
+
+        // try to add again
+        descriptor = new AddLogCommand.AddLogDescriptor();
+        descriptor.setNewTitle(title);
+        command = new AddLogCommand(targetName, descriptor);
+        assertCommandFailure(command, testModel, AddLogCommand.MESSAGE_DUPLICATE_LOG);
+
+        // ===== FILTERED LIST =====
+        model = new ModelManager(getTypicalAddressBook(), new UserPrefs());
+        showPersonAtIndex(model, INDEX_FIRST_PERSON); // apply filter
+
+        // add log into list
+        testModel = new ModelManager(new AddressBook(model.getAddressBook()), new UserPrefs());
+        withLogPerson = new PersonBuilder().withLogs(log).build(); // build person with log
+        targetName = withLogPerson.getName();
+        testModel.setPerson((model.getFilteredPersonList().get(targetIndex.getZeroBased())), withLogPerson); // add him in
+
+        // try to add again
+        descriptor = new AddLogCommand.AddLogDescriptor();
+        descriptor.setNewTitle(title);
+        command = new AddLogCommand(targetName, descriptor);
+        assertCommandFailure(command, testModel, AddLogCommand.MESSAGE_DUPLICATE_LOG);
+    }
+    @Test //todo
     public void execute_invalidInputUnfilteredList_failure() {
 
         String title = VALID_LOG_TITLE;
@@ -241,8 +352,15 @@ public class AddLogCommandTest {
         command = new AddLogCommand(outOfBoundIndex, descriptor);
         assertCommandFailure(command, model, MESSAGE_INVALID_INDEX);
 
+        // ===== INVALID NAME =====
+
+        model = new ModelManager(getTypicalAddressBook(), new UserPrefs());
+        Name notInList = new Name("somegibberish");
+        command = new AddLogCommand(notInList, descriptor);
+        assertCommandFailure(command, model, MESSAGE_PERSON_NOT_FOUND);
+
+
         // ===== INVALID TITLE =====
-        showPersonAtIndex(model, INDEX_FIRST_PERSON); // apply filter
 
         assertThrows(AssertionError.class, () -> {
             Model m = new ModelManager(getTypicalAddressBook(), new UserPrefs());

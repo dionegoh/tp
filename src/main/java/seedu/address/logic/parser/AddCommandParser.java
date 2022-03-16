@@ -9,8 +9,6 @@ import static seedu.address.logic.parser.CliSyntax.PREFIX_NAME;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_PHONE;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_TAG;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 
 import seedu.address.logic.commands.AddCommand;
@@ -18,7 +16,6 @@ import seedu.address.logic.parser.exceptions.ParseException;
 import seedu.address.model.person.Address;
 import seedu.address.model.person.Description;
 import seedu.address.model.person.Email;
-import seedu.address.model.person.Log;
 import seedu.address.model.person.Name;
 import seedu.address.model.person.Person;
 import seedu.address.model.person.Phone;
@@ -47,20 +44,19 @@ public class AddCommandParser implements Parser<AddCommand> {
         Name name = ParserUtil.parseName(argMultimap.getValue(PREFIX_NAME).get());
         Phone phone = argMultimap.getValue(PREFIX_PHONE).isPresent()
                 ? ParserUtil.parsePhone(argMultimap.getValue(PREFIX_PHONE).get())
-                : new Phone(null);
+                : null;
         Email email = argMultimap.getValue(PREFIX_EMAIL).isPresent()
                 ? ParserUtil.parseEmail(argMultimap.getValue(PREFIX_EMAIL).get())
-                : new Email(null);
+                : null;
         Address address = argMultimap.getValue(PREFIX_ADDRESS).isPresent()
                 ? ParserUtil.parseAddress(argMultimap.getValue(PREFIX_ADDRESS).get())
-                : new Address(null);
+                : null;
         Description description = argMultimap.getValue(PREFIX_DESCRIPTION).isPresent()
                 ? ParserUtil.parsePersonDescription(argMultimap.getValue(PREFIX_DESCRIPTION).get())
-                : new Description(null);
+                : null;
         Set<Tag> tagList = ParserUtil.parseTags(argMultimap.getAllValues(PREFIX_TAG));
-        List<Log> logList = new ArrayList<>();
 
-        Person person = new Person(name, phone, email, address, description, tagList);
+        Person person = new Person(name, phone, email, address, description, tagList, null); // explicitly no logs
 
         return new AddCommand(person);
     }

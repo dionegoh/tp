@@ -100,7 +100,9 @@ public class EditCommand extends Command {
         Address updatedAddress = editPersonDescriptor.getAddress().orElse(personToEdit.getAddress());
         Set<Tag> updatedTags = editPersonDescriptor.getTags().orElse(personToEdit.getTags());
         List<Log> updatedLogs = editPersonDescriptor.getLogs().orElse(personToEdit.getLogs());
-        return new Person(updatedName, updatedPhone, updatedEmail, updatedAddress, updatedTags, updatedLogs);
+        // todo implement editfriend with description
+        return new Person(updatedName, updatedPhone, updatedEmail, updatedAddress, null, updatedTags, updatedLogs);
+
     }
 
     @Override

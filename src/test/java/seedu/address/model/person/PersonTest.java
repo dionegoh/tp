@@ -94,6 +94,27 @@ public class PersonTest {
         assertFalse(ALICE.equals(editedAlice));
         Person editedAliceWithDifferentDescriptions = new PersonBuilder(ALICE)
                 .withLogs(TypicalLogs.getIdenticalButDifferentTypicalLogs()).build();
+        assertFalse(ALICE.equals(editedAliceWithDifferentDescriptions));
+
+    }
+
+    @Test
+    public void hasSameName() {
+
+        // no other fields
+        Name name = new Name("some valid name");
+        Name repeatedName = new Name("some valid name");
+
+        Person person = new Person(name);
+        Person otherPerson = new Person(repeatedName);
+        assertTrue(person.hasSameName(otherPerson));
+
+        // returns true even with different attributes
+        Person editedAlice = new PersonBuilder(ALICE).withLogs(TypicalLogs.getTypicalLogs()).build();
+        assertTrue(ALICE.hasSameName(editedAlice));
+
+        // returns false
+        assertFalse(ALICE.hasSameName(BOB));
 
     }
 }

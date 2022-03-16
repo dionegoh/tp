@@ -1,6 +1,7 @@
 package seedu.address.model.person;
 
-import static seedu.address.commons.util.CollectionUtil.requireAllNonNull;
+import static java.util.Objects.isNull;
+import static java.util.Objects.requireNonNull;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -19,66 +20,46 @@ public class Person {
 
     // Identity fields
     private final Name name;
-    private final Phone phone;
-    private final Email email;
+
 
     // Data fields
+    private final Phone phone;
+    private final Email email;
     private final Address address;
     private final Description description;
     private final Set<Tag> tags = new HashSet<>();
     private final UniqueLogList logs = new UniqueLogList();
 
     /**
-     * Constructs a Person
+     * Constructs a person.
      *
-     * @param name Name of person
-     * @param phone Phone of person
-     * @param email Email of person
-     * @param address Address of person
-     * @param description Description of person
-     * @param tags Tag(s) of person
+     * @param name        Name of the person. Compulsory.
+     * @param phone       Phone object of the person. If null, default to no phone.
+     * @param email       Phone object of the person. If null, default to no email.
+     * @param address     Phone object of the person. If null, default to no address.
+     * @param description Phone object of the person. If null, default to no description.
+     * @param tags        Set of tags of the person. If null, default to no tags.
+     * @param logs        Log list of the person. if null, default to no logs.
      */
-    public Person(Name name, Phone phone, Email email, Address address, Description description, Set<Tag> tags) {
-        requireAllNonNull(name, phone, email, address, tags);
+    public Person(Name name, Phone phone, Email email, Address address, Description description, Set<Tag> tags, List<Log> logs) {
+        requireNonNull(name);
         this.name = name;
-        this.phone = phone;
-        this.email = email;
-        this.address = address;
-        this.description = description;
-        this.tags.addAll(tags);
-        this.logs.setLogs(new ArrayList<>());
+        this.phone = isNull(phone) ? new Phone(null) : phone;
+        this.email = isNull(email) ? new Email(null) : email;
+        this.address = isNull(address) ? new Address(null) : address;
+        this.description = isNull(description) ? new Description(null) : description;
+        this.tags.addAll(isNull(tags) ? new HashSet<>() : tags);
+        this.logs.setLogs(isNull(logs) ? new ArrayList<>() : logs);
 
     }
 
     /**
-     * Overloaded method to construct a person to have a description with null value.
-     * Every field must be present and not null.
+     * Overloaded method to construct a person with only a name.
+     *
+     * @param name Name of the person. Compulsory.
      */
-    public Person(Name name, Phone phone, Email email, Address address, Set<Tag> tags, List<Log> logs) {
-        requireAllNonNull(name, phone, email, address, tags, logs);
-        this.name = name;
-        this.phone = phone;
-        this.email = email;
-        this.address = address;
-        this.description = new Description(null);
-        this.tags.addAll(tags);
-        this.logs.setLogs(logs);
-    }
-
-    /**
-     * Overloaded method to construct a person to have an empty list of logs.
-     * Every field must be present and not null.
-     */
-    public Person(Name name, Phone phone, Email email, Address address, Description description, Set<Tag> tags,
-                  List<Log> logs) {
-        requireAllNonNull(name, phone, email, address, tags);
-        this.name = name;
-        this.phone = phone;
-        this.email = email;
-        this.address = address;
-        this.description = description;
-        this.tags.addAll(tags);
-        this.logs.setLogs(logs);
+    public Person(Name name) {
+        this(name, null, null, null, null, null, null);
     }
 
     public Name getName() {
@@ -118,8 +99,8 @@ public class Person {
     }
 
     /**
-     * Returns true if both persons have the same name.
-     * This defines a weaker notion of equality between two persons.
+     * Returns true if both persons are the same, which we define to be
+     * having the same name.
      */
     public boolean isSamePerson(Person otherPerson) {
         if (otherPerson == this) {
@@ -128,6 +109,13 @@ public class Person {
 
         return otherPerson != null
                 && otherPerson.getName().equals(getName());
+    }
+
+    /**
+     * Returns true if both persons explicitly have the same name.
+     */
+    public boolean hasSameName(Person otherPerson) {
+        return this.name.equals(otherPerson.name);
     }
 
     /**

@@ -11,6 +11,7 @@ import seedu.address.commons.core.index.Index;
 import seedu.address.logic.commands.AddLogCommand;
 import seedu.address.logic.commands.AddLogCommand.AddLogDescriptor;
 import seedu.address.logic.parser.exceptions.ParseException;
+import seedu.address.model.person.Name;
 
 /**
  * Parses input arguments and creates a new AddLogCommand object
@@ -30,21 +31,27 @@ public class AddLogCommandParser implements Parser<AddLogCommand> {
         ArgumentMultimap argMultimap =
                 ArgumentTokenizer.tokenize(args, PREFIX_NAME, PREFIX_TITLE, PREFIX_DESCRIPTION);
 
-        Index index;
+        Name name = null;
+        Index index = null;
 
-        // ensure title prefix and index are present
+        // ensure title prefix is present
         if (!arePrefixesPresent(argMultimap, PREFIX_TITLE)) {
             throw new ParseException(MESSAGE_INVALID_FORMAT);
         }
-        if (argMultimap.getPreamble().isEmpty()) {
+
+        // ensure exactly one of index or name prefix is present
+        boolean hasIndex = !argMultimap.getPreamble().isEmpty();
+        boolean hasName = arePrefixesPresent(argMultimap, PREFIX_NAME);
+        if ((!hasIndex && !hasName)
+            || (hasIndex && hasName)) {
             throw new ParseException(MESSAGE_INVALID_FORMAT);
         }
 
-        // parse
-        try {
+        // parse index or name
+        if (hasIndex) {
             index = ParserUtil.parseIndex(argMultimap.getPreamble());
-        } catch (ParseException pe) {
-            throw new ParseException(MESSAGE_INVALID_FORMAT, pe);
+        } else {
+            name = ParserUtil.parseName(argMultimap.getValue(PREFIX_NAME).get());
         }
 
         // wrap new log into helper class
@@ -64,6 +71,12 @@ public class AddLogCommandParser implements Parser<AddLogCommand> {
             throw new ParseException(MESSAGE_INVALID_FORMAT);
         }
 
-        return new AddLogCommand(index, addLogDescriptor);
+        AddLogCommand command;
+        if (hasIndex) {
+            command = new AddLogCommand(index, addLogDescriptor);
+        } else {
+            command = new AddLogCommand(name, addLogDescriptor);
+        }
+        return command;
     }
 }

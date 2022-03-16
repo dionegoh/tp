@@ -3,20 +3,15 @@ package seedu.address.logic.commands;
 import static java.util.Objects.requireNonNull;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_NAME;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-
 import javafx.collections.ObservableList;
 import seedu.address.commons.core.Messages;
 import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.model.Model;
 import seedu.address.model.person.Address;
 import seedu.address.model.person.Email;
-import seedu.address.model.person.Log;
 import seedu.address.model.person.Name;
 import seedu.address.model.person.Person;
 import seedu.address.model.person.Phone;
-import seedu.address.model.tag.Tag;
 
 
 /**
@@ -52,11 +47,10 @@ public class DeleteCommand extends Command {
 
         requireNonNull(model);
 
-        Person personWithNameToDelete = new Person(nameOfPersonToDelete, dummyPhone,
-                dummyEmail, dummyAddress, new HashSet<Tag>(), new ArrayList<Log>());
+        Person personWithNameToDelete = new Person(nameOfPersonToDelete);
 
-        if (!model.hasPerson(personWithNameToDelete)) { //model.hasPerson considers 2 Persons with same name
-            //to be the same Person
+        if (!model.hasPerson(personWithNameToDelete)) { // model.hasPerson considers 2 Persons with same name
+            // to be the same Person
             throw new CommandException(Messages.MESSAGE_INVALID_PERSON_NAME);
         }
 

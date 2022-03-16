@@ -3,19 +3,15 @@ package seedu.address.model.event;
 import static seedu.address.commons.util.CollectionUtil.requireAllNonNull;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
 import seedu.address.model.AddressBook;
-import seedu.address.model.person.Address;
 import seedu.address.model.person.Description;
-import seedu.address.model.person.Email;
 import seedu.address.model.person.Name;
 import seedu.address.model.person.Person;
-import seedu.address.model.person.Phone;
 
 /**
  * Represents an Event in Amigos.
@@ -78,13 +74,12 @@ public class Event {
      */
     public boolean areFriendNamesValid(AddressBook addressBook) {
         // There ought to be a better way of doing this - search AddressBook by name perhaps?
-        final Phone dummyPhone = new Phone("12345678");
-        final Email dummyEmail = new Email("dummyemail@gmail.com");
-        final Address dummyAddress = new Address("Dummy Address");
+        // worth thinking about - how to enforce search specifically by name, rather than relying
+        // on the ::hasPerson(Person) method. todo implement search by name (specifically name objects match)
+
         for (Name name : getFriendNames()) {
-            Person dummyPerson = new Person(name, dummyPhone, dummyEmail, dummyAddress, new HashSet<>(),
-                    new ArrayList<>());
-            if (!addressBook.hasPerson(dummyPerson)) {
+            Person beingLookedFor = new Person(name);
+            if (!addressBook.hasPerson(beingLookedFor)) {
                 return false;
             }
         }

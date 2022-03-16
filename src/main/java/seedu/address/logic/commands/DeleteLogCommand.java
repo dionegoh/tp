@@ -16,6 +16,7 @@ import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.logic.parser.DeleteLogCommandParser;
 import seedu.address.model.Model;
 import seedu.address.model.person.Address;
+import seedu.address.model.person.Description;
 import seedu.address.model.person.Email;
 import seedu.address.model.person.Log;
 import seedu.address.model.person.Name;
@@ -220,9 +221,10 @@ public class DeleteLogCommand extends Command {
             Phone phone = personToEdit.getPhone();
             Email email = personToEdit.getEmail();
             Address address = personToEdit.getAddress();
+            Description description = personToEdit.getDescription();
             Set<Tag> tags = personToEdit.getTags();
             List<Log> emptyLogs = new ArrayList<>(); // main logic encompassed here
-            return new Person(name, phone, email, address, tags, emptyLogs);
+            return new Person(name, phone, email, address, description, tags, emptyLogs);
         }
 
         /**
@@ -266,8 +268,9 @@ public class DeleteLogCommand extends Command {
             Email email = personToEdit.getEmail();
             Address address = personToEdit.getAddress();
             Set<Tag> tags = personToEdit.getTags();
+            Description description = personToEdit.getDescription();
             List<Log> updatedLogs = getLogsAfterDelete(personToEdit, toDelete); // main logic encompassed here
-            return new Person(name, phone, email, address, tags, updatedLogs);
+            return new Person(name, phone, email, address, description, tags, updatedLogs);
         }
 
         /**

@@ -52,6 +52,8 @@ Amigos is a desktop application to help tech-savvy university students manage th
 * Extraneous parameters for commands that do not take in parameters (such as `showfriends`, `showevents` and `exit`) will be ignored.<br>
   e.g. if the command specifies `showfriends 123`, it will be interpreted as `showfriends`.
 
+* Arguments connected by a `?` are exclusively-or - i.e. only one or the other can be provided. 
+  e.g. in `addlog INDEX ? n/NAME`, either `INDEX` or `NAME` must be provided, but not both.
 </div>
 
 ## Friend Management
@@ -131,16 +133,16 @@ Amigos provides functionality to manage logs, which are essentially detailed not
 
 Adds a log to an existing friend at the specified `INDEX` in Amigos.
 The `INDEX` refers to the index number shown in the displayed person's list.
-Format: `addlog INDEX t/[TITLE] d/[DESCRIPTION]`
+Format: `addlog INDEX ? n/NAME ttl/[TITLE] d/[DESCRIPTION]`
 
-* The `INDEX` field is compulsory.
+* Exactly one of `INDEX` or the `NAME` fields is compulsory.
 * If the `TITLE` argument is provided, then the `DESCRIPTON` argument is optional.
 * If neither `TITLE` nor `DESCRIPTION` arguments are provided, then a GUI
   pop up will prompt the user to key in the title and longer-form text as the description.
 
 Examples:
-* `addlog 1 t/has a pet named poki`
-* `addlog 2 t/recommended movies d/the martian, interstellar, three idiots`
+* `addlog 1 ttl/has a pet named poki`
+* `addlog John ttl/recommended movies d/the martian, interstellar, three idiots`
 
 ### Editing a log: `editlog`
 
