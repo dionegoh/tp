@@ -67,57 +67,60 @@ Adds a new friend to Amigos. A friend has:
 * *(optional)* email
 * *(optional)* address
 * *(optional)* description
+* *(optional)* tag(s)
 
-**Format**: `addfriend n/[NAME]  p/[PHONE_NUMBER] e/[EMAIL]  a/[ADDRESS] d/[DESCRIPTION]`
 
-* Note that `NAME` field is minimally compulsory. `p/`, `em/`, `a/` and `d/` flags and their arguments are optional.
+**Format**: `addfriend n/NAME  [p/PHONE_NUMBER] [e/EMAIL]  [a/ADDRESS] [d/DESCRIPTION] [t/TAG]...`
+
+* Note that `NAME` field is minimally compulsory. `p/`, `em/`, `a/`, `d/` and `t/` flags and their arguments are optional.
 * Note that there can be no duplicate friends having the same name.
 
 **Examples**:
-* `addfriend n/John Doe p/98765432 e/johnd@example.com a/John street, block 123, #01-01 d/Physics Major, Sarah’s friend. Met at Freshman Dinner.`
+* `addfriend n/John Doe p/98765432 e/johnd@example.com a/John street, block 123, #01-01 d/Physics Major, Sarah’s friend. Met at Freshman Dinner. t/friend t/classmate`
 * `addfriend n/John Doe`
 
 ### Editing a friend : `editfriend`
 
 Edits an existing friend in Amigos.
 
-**Format**: `editfriend cn/[CURRENT_NAME] nn/[NEW_NAME]  np/[NEW_PHONE_NUMBER] ne/[NEW_EMAIL] na/[NEW_ADDRESS] nd/[NEW_DESCRIPTION]`
+**Format**: `editfriend INDEX [nn/NEW_NAME]  [np/NEW_PHONE_NUMBER] [ne/NEW_EMAIL] [na/NEW_ADDRESS] [nd/NEW_DESCRIPTION] [nt/TAG]...`
 
-* Edits an existing friend in Amigos. Field `CURRENT_NAME` is compulsory to identify the existing friend.
+* Edits an existing friend in Amigos. 
 * At least one of the optional fields must be provided.
 * Existing values will be overwritten to the input values.
+* Note that when editing tags, the existing tags of the friend will be removed i.e adding of tags is not cumulative.
 
 
 **Examples**:
-* `editfriend cn/John Doe na/John street, block 456, #01-01 ne/johndoe@example.com` edits the address
-  and email of John Doe to be `John street, block 456, #01-01` and `johndoe@example.com` respectively.
+* `editfriend 1 na/John street, block 456, #01-01 ne/johndoe@example.com` edits the address
+  and email of the friend at `INDEX` 1 to be `John street, block 456, #01-01` and `johndoe@example.com` respectively.
 
 
 ### Deleting a friend : `deletefriend`
 
 Deletes a friend in Amigos.
 
-**Format**: `deletefriend n/[NAME]`
+**Format**: `deletefriend INDEX ? n/NAME`
 
-* `NAME` field must be provided unless all friends are being deleted then just the -a flag is needed.
+* Either a specified`INDEX`or `NAME` of an existing friend in Amigos must be provided.
 
 **Examples**:
 * `deletefriend n/John Doe`
-* `deletefriend -a`
+* `deletefriend 1`
 
 
 ### Show a specific friend: `showfriend`
 
-Shows page containing the full details related to an existing friend in Amigos. By default, only the latest 10 logs are displayed in this page.
+Shows page containing the full details related to an existing friend in Amigos.
 
-**Format**: `showfriend n/NAME -alllogs`
+**Format**: `showfriend n/NAME`
 
 * NAME field **must** be provided.
-* If the `-alllogs` flag is provided all the logs contained in that person will be displayed instead of the default 10 logs.
+*  If the `-alllogs` flag is provided all the logs contained in that person will be displayed instead of the default 10 logs. *__(Coming Soon!)__*
 
 **Examples**:
 * `showfriend n/John Doe` Will open up the page containing full details related to John Doe - his name, address, phone number, email, description, logs, and upcoming events with him.
-* `showfriend n/John Doe -alllogs` Will do the same as above except every single log will be displayed
+
 
 ### Show all friends : `showfriends`
 
@@ -234,9 +237,15 @@ Shows all events stored in Amigos. Switches GUI to the events tab.
 ## Miscellaneous
 ### Viewing help : `help`
 
-Shows a message explaning how to access the help page.
+Shows a message explaining how to access the help page.
 
 **Format**: `help`
+
+### Clearing all existing data : `clear`
+
+Clears all existing friends, events, and logs in Amigos.
+
+**Format**: `clear`
 
 ### Exiting the program : `exit`
 
@@ -268,17 +277,20 @@ If your changes to the data file makes its format invalid, Amigos will discard a
 
 ## Command summary
 
-| Action                     | Format, Examples                                                                                                                                                                                                                       |
-|----------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| **Add Friend**             | `addfriend n/[NAME] p/[PHONE_NUMBER] e/[EMAIL]  a/[ADDRESS] d/[DESCRIPTION]` <br> e.g., `addfriend n/John Doe p/98765432 e/johnd@example.com a/John street, block 123, #01-01 d/Physics Major, Sarah’s friend. Met at Freshman Dinner` |
-| **Edit friend**            | `editfriend cn[CURRENT_NAME] nn/[NEW_NAME]  np/[NEW_PHONE_NUMBER] ne/[NEW_EMAIL] na/[NEW_ADDRESS] nd/[NEW_DESCRIPTION]`<br> e.g., `editfriend cn/John Doe na/John street, block 456, #01-01 ne/johndoe@example.com`                    |
-| **Delete Friend**          | `deletefriend n/[NAME]` <br> `deletefriend -a` <br> e.g., `deletefriend n/John Doe`                                                                                                                                                    |
-| **Show a specific friend** | `showfriend n/NAME -alllogs`                                                                                                                                                                                                           |
-| **Show all friends**       | `showfriends`                                                                                                                                                                                                                          |
-| **Add log**                | `addlog n/[NAME] t/[TITLE] d/[DESCRIPTION]`                                                                                                                                                                                            |
-| **Edit log**               | `editlog n/[NAME] id/[LOG_INDEX] nt/[NEW_TITLE] nd/[NEW_DESCRIPTION]`                                                                                                                                                                  |
-| **Delete log**             | `deletelog n/[NAME] id/[LOG_INDEX] -a`                                                                                                                                                                                                 |
-| **Add Event**              | `addevent n/EVENT_NAME dt/DATE_TIME [d/DESCRIPTION] [f/FRIEND_NAME]...` <br> e.g.,`addevent n/John’s Birthday dt/15-08-2021 1700 d/Remember to get a present! f/John Low f/Alex Yeo`                                                   |
-| **Edit Event**             | `editevent INDEX [n/EVENT_NAME] [dt/DATE_TIME] [d/DESCRIPTION] [af/ADD_FRIEND_NAME]... rf/[REMOVE_FRIEND_NAME]...` <br> e.g., `editevent 2 dt/16-08-2022 1600 af/Jacky Jones rf/Sarah Lim rf/Alex Yeo`                                 |
-| **Delete Event**           | `deleteevent INDEX` <br> e.g., `deleteevent 2`                                                                                                                                                                                         |
-| **Show all events**        | `showevents`                                                                                                                                                                                                                           |
+| Action                     | Format, Examples                                                                                                                                                                                                                                                       |
+|----------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **Add Friend**             | `addfriend n/NAME  [p/PHONE_NUMBER] [e/EMAIL]  [a/ADDRESS] [d/DESCRIPTION] [t/TAG]...` <br> e.g., `addfriend n/John Doe p/98765432 e/johnd@example.com a/John street, block 123, #01-01 d/Physics Major, Sarah’s friend. Met at Freshman Dinner. t/friend t/classmate` |
+| **Edit friend**            | `editfriend INDEX [nn/NEW_NAME]  [np/NEW_PHONE_NUMBER] [ne/NEW_EMAIL] [na/NEW_ADDRESS] [nd/NEW_DESCRIPTION] [nt/TAG]...` <br> e.g., `editfriend 1 na/John street, block 456, #01-01 ne/johndoe@example.com`                                                            |
+| **Delete Friend**          | `deletefriend INDEX ? n/NAME` <br> e.g., `deletefriend n/John Doe`, `deletefriend 1`                                                                                                                                                                                   |
+| **Show a specific friend** | `showfriend n/NAME`                                                                                                                                                                                                                                                    |
+| **Show all friends**       | `showfriends`                                                                                                                                                                                                                                                          |
+| **Add log**                | `addlog n/[NAME] t/[TITLE] d/[DESCRIPTION]`                                                                                                                                                                                                                            |
+| **Edit log**               | `editlog n/[NAME] id/[LOG_INDEX] nt/[NEW_TITLE] nd/[NEW_DESCRIPTION]`                                                                                                                                                                                                  |
+| **Delete log**             | `deletelog n/[NAME] id/[LOG_INDEX] -a`                                                                                                                                                                                                                                 |
+| **Add Event**              | `addevent n/EVENT_NAME dt/DATE_TIME [d/DESCRIPTION] [f/FRIEND_NAME]...` <br> e.g.,`addevent n/John’s Birthday dt/15-08-2021 1700 d/Remember to get a present! f/John Low f/Alex Yeo`                                                                                   |
+| **Edit Event**             | `editevent INDEX [n/EVENT_NAME] [dt/DATE_TIME] [d/DESCRIPTION] [af/ADD_FRIEND_NAME]... rf/[REMOVE_FRIEND_NAME]...` <br> e.g., `editevent 2 dt/16-08-2022 1600 af/Jacky Jones rf/Sarah Lim rf/Alex Yeo`                                                                 |
+| **Delete Event**           | `deleteevent INDEX` <br> e.g., `deleteevent 2`                                                                                                                                                                                                                         |
+| **Show all events**        | `showevents`                                                                                                                                                                                                                                                           |
+| **Help**                   | `help`                                                                                                                                                                                                                                                                 |
+| **Clear**                  | `clear`                                                                                                                                                                                                                                                                |
+| **Exit**                   | `exit`                                                                                                                                                                                                                                                                 |
