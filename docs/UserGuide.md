@@ -22,7 +22,7 @@ Amigos is a desktop application to help tech-savvy university students manage th
 
 5. Type the command in the command box and press Enter to execute it. e.g:
 
-  * **`showfriends`** : Lists all friends.
+* **`showfriends`** : Lists all friends.
 
 6. Refer to the [Features](#features) below for details of each command.
 
