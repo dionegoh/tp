@@ -241,7 +241,6 @@ public class EditCommandParserTest {
                 + NEW_EMAIL_DESC_BOB;
         descriptor = new EditPersonDescriptorBuilder().withAddress(VALID_ADDRESS_BOB).withName(VALID_NAME_BOB)
                 .withPhone(VALID_PHONE_BOB).withEmail(VALID_EMAIL_BOB).build();
-        System.out.println(descriptor);
         expectedCommand = new EditCommand(targetIndex, descriptor);
         assertParseSuccess(parser, userInput, expectedCommand);
     }

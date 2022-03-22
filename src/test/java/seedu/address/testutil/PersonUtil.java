@@ -74,7 +74,6 @@ public class PersonUtil {
                 tags.forEach(s -> sb.append(PREFIX_NEW_TAG).append(s.tagName).append(" "));
             }
         }
-        System.out.println(sb.toString());
         return sb.toString();
     }
 }
