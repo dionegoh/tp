@@ -87,7 +87,7 @@ Edits an existing friend in Amigos.
 
 
 **Examples**:
-* `editfriend 1 na/John street, block 456, #01-01 ne/johndoe@example.com` edits the address
+* `editfriend 1 a/John street, block 456, #01-01 e/johndoe@example.com` edits the address
   and email of the friend at `INDEX` 1 to be `John street, block 456, #01-01` and `johndoe@example.com` respectively.
 * `editfriend cn/Alex Yeoh nn/Alex Tan` will change the name of `Alex Yeoh` to `Alex Tan`.
 
@@ -331,6 +331,6 @@ Please do not manually edit the save file to avoid the risk of data corruption.
 | **Delete Event**           | `de`          | `deleteevent INDEX` <br> e.g., `deleteevent 2`                                                                                                                                                                                                                         |
 | **List all events**        | `le`          | `listevents [-a]`                                                                                                                                                                                                                                                      |
 | **Find events**            | `fe`          | `findevent [n/EVENT_NAME_SUBSTRING] [ds/DATE_START] [de/DATE_END] [f/FRIEND_NAME_SUBSTRING]...` <br> e.g.,`findevent n/dinner ds/20-03-2022 f/Maggie`                                                                                                                  |
-| **Help**                   |               | `help`                                                                                                                                                                                                                                                                 |
-| **Clear**                  |               | `clear`                                                                                                                                                                                                                                                                |
-| **Exit**                   |               | `exit`                                                                                                                                                                                                                                                                 |
+| **Help**                   | -             | `help`                                                                                                                                                                                                                                                                 |
+| **Clear**                  | -             | `clear`                                                                                                                                                                                                                                                                |
+| **Exit**                   | -             | `exit`                                                                                                                                                                                                                                                                 |
